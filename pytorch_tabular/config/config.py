@@ -66,7 +66,7 @@ class DataConfig:
             Used only if Validation Data is not given separately
 
         continuous_feature_transform (Optional[str, NoneType]): Whether or not to transform the features before modelling.
-            By default it is turned off.Choices are: None "yeo-johnson" "box-cox" "quantile_normal" "quantile_uniform"
+            By default it is turned off.Choices are: None "yeo-johnson" "box-cox" "quantile_normal" "quantile_uniform" "gauss-rank"
 
         normalize_continuous_features (bool): Flag to normalize the input features(continuous)
 
@@ -119,6 +119,7 @@ class DataConfig:
                 "box-cox",
                 "quantile_normal",
                 "quantile_uniform",
+                "gauss-rank"
             ],
         },
     )
@@ -222,6 +223,26 @@ class TrainerConfig:
 
         track_grad_norm (int): Track and Log Gradient Norms in the logger.
             -1 by default means no tracking. 1 for the L1 norm, 2 for L2 norm, etc.
+
+        gradient_clip_algorithm (str): 'value' means clip_by_value, 'norm' means clip_by_norm. Default: 'norm'
+
+        log_gpu_memory: None, 'min_max', 'all'. Might slow performance
+
+        progress_bar_refresh_rate: How often to refresh progress bar (in steps). Value ``0`` disables progress bar.
+                Ignored when a custom progress bar is passed to :paramref:`~Trainer.callbacks`. Default: None, means
+                a suitable value will be chosen based on the environment (terminal, Google COLAB, etc.).
+
+        max_steps: Stop training after this number of steps. Disabled by default (None).
+
+        min_steps: Force training for at least these number of steps. Disabled by default (None)
+
+        flush_logs_every_n_steps: How often to flush logs to disk (defaults to every 100 steps).
+
+        log_every_n_steps: How often to log within steps (defaults to every 50 steps).
+
+        terminate_on_nan: If set to True, will terminate training (by raising a `ValueError`) at the
+                end of each training batch, if any of the parameters or the loss are NaN or +/-inf.
+
     """
 
     batch_size: int = field(
@@ -343,6 +364,57 @@ class TrainerConfig:
         default=-1,
         metadata={
             "help": "Track and Log Gradient Norms in the logger. -1 by default means no tracking. 1 for the L1 norm, 2 for L2 norm, etc."
+        },
+    )
+    gradient_clip_algorithm: Optional[str] = field(
+        default="norm",
+        metadata={
+            "help": "algorithm for gradient clipping. 'value' means clip_by_value, 'norm' means clip_by_norm. Default: 'norm'",
+            "choices": ["value", "norm"],
+        },
+    )
+    log_gpu_memory: Optional[str] = field(
+        default=None,
+        metadata={
+            "help": "If log gpu information. Can be: None, 'min_max', 'all'. Might slow performance",
+            "choices": [None, "min_max", "all"],
+        },
+    )
+    progress_bar_refresh_rate: Optional[str] = field(
+        default=None,
+        metadata={
+            "help": "How often to refresh progress bar (in steps)"
+        },
+    )
+    max_steps: Optional[int] = field(
+        default=None,
+        metadata={
+            "help": "Stop training after this number of step"
+        },
+    )
+    min_steps: Optional[int] = field(
+        default=None,
+        metadata={
+            "help": "Force training for at least these number of steps. Disabled by default (None)."
+        },
+    )
+    flush_logs_every_n_steps: Optional[int] = field(
+        default=100,
+        metadata={
+            "help": "How often to flush logs to disk (defaults to every 100 steps)."
+        },
+    )
+    log_every_n_steps: Optional[int] = field(
+        default=50,
+        metadata={
+            "help": "How often to log within steps (defaults to every 50 steps)."
+        },
+    )
+    terminate_on_nan: Optional[bool] = field(
+        default=False,
+        metadata={
+            "help": "If set to True, will terminate training (by raising a `ValueError`) at the end of each training batch, "
+                    "if any of the parameters or the loss are NaN or +/-inf."
         },
     )
 

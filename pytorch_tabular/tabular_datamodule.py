@@ -24,7 +24,8 @@ from sklearn.preprocessing import (
 )
 from torch.utils.data import DataLoader, Dataset
 
-from .categorical_encoders import OrdinalEncoder
+from pytorch_tabular.categorical_encoders import OrdinalEncoder
+from pytorch_tabular.gauss_rank import GaussRankScaler
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,10 @@ class TabularDatamodule(pl.LightningDataModule):
         "yeo-johnson": {
             "callable": PowerTransformer,
             "params": dict(method="yeo-johnson", standardize=False),
+        },
+        "gauss-rank": {
+            "callable": GaussRankScaler,
+            "params": dict(epsilon=1e-4, interp_kind='linear')
         },
     }
 

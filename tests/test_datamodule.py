@@ -28,7 +28,7 @@ from pytorch_tabular.tabular_datamodule import TabularDatamodule
     ],
 )
 @pytest.mark.parametrize("categorical_cols", [["HouseAgeBin"], []])
-@pytest.mark.parametrize("continuous_feature_transform", [None, "yeo-johnson"])
+@pytest.mark.parametrize("continuous_feature_transform", [None, "yeo-johnson", "gauss-rank"])
 @pytest.mark.parametrize("normalize_continuous_features", [True, False])
 @pytest.mark.parametrize(
     "target_transform",
